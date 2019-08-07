@@ -1,0 +1,12 @@
+amqp==1.4.9
+anyjson==0.3.3
+billiard==3.3.0.23
+celery==3.1.24
+cx-Oracle==7.2.1
+Django==2.1.11
+django-filter==2.2.0
+djangorestframework==3.10.2
+kombu==3.0.37
+Markdown==3.1.1
+pytz==2019.2
+sqlparse==0.3.0
