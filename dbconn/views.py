@@ -2,9 +2,12 @@ from django.core import serializers
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
+
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from util.database import connection
 from .decorators import ajax_required
 from .forms import DBconnForm
 from .models import DBconn, History
@@ -36,10 +39,11 @@ def create_chart(request):
     start_date = request.POST['start_date']
     end_date = request.POST['end_date']
     # dbconn = DBconn(username, password, server_ip, port)
-
     history = History(db_conn=DBconn.objects.get(pk=1), 
                       start_date=start_date,
                       end_date=end_date)
+    connection.connect_db(history)
     # history.save()
+
     serializer = HistorySerializer(history)
     return Response(serializer.data)
