@@ -56,31 +56,14 @@
           </div>
         </div>
       </div>
-        
+      <div class="row">
+        <div class="col-sm-12">
+          <input type="submit" class="button" value="post">
+        </div>
+      </div>
       </form>
 
-      <script>
-        $(".input").focus(function() {
-          $(this).parent().addClass("focus");
-        })
-
-        $('start_date').datetimepicker();
-        
-          // End date date and time picker 
-        $('end_date').datetimepicker({
-            useCurrent: false 
-          });
-          
-          // start date picke on chagne event [select minimun date for end date datepicker]
-        $("#start_date").on("dp.change", function (e) {
-            $('#end_date').data("DateTimePicker").minDate(e.date);
-          });
-          // Start date picke on chagne event [select maxmimum date for start date datepicker]
-        $("#end_date").on("dp.change", function (e) {
-          $('#start_date').data("DateTimePicker").maxDate(e.date);
-          });
-
-      </script>
+      
     </div>
   </div>
 </div>
@@ -111,7 +94,7 @@
     <label for="end_date">end date : </label>
     <input id="end_date"> 
   </div> -->
-  <input type="submit" value="Post" class="tiny button">
+  <!-- <input type="submit" value="Post" class="tiny button"> -->
 </form>
 
 
@@ -125,6 +108,26 @@
 
 <script>
 {% block domready %}
+  $(".input").focus(function() {
+    $(this).parent().addClass("focus");
+  })
+
+  $('start_date').datetimepicker();
+  
+    // End date date and time picker 
+  $('end_date').datetimepicker({
+      useCurrent: false 
+    });
+    
+    // start date picke on chagne event [select minimun date for end date datepicker]
+  $("#start_date").on("dp.change", function (e) {
+      $('#end_date').data("DateTimePicker").minDate(e.date);
+    });
+    // Start date picke on chagne event [select maxmimum date for start date datepicker]
+  $("#end_date").on("dp.change", function (e) {
+    $('#start_date').data("DateTimePicker").maxDate(e.date);
+    });
+
 // https://realpython.com/django-and-ajax-form-submissions/
 function create_chart() {
     console.log("create chart is working!") // sanity check
