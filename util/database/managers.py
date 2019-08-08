@@ -13,7 +13,7 @@ class ConnectionManager:
 
     def __init__(self, history):
         self.history = history
-    
+
     def connect_db(self):
         dbconn = self.history.get_db_conn()
         dsn_tns = cx_Oracle.makedsn(dbconn.server_ip, dbconn.port, dbconn.sid)
