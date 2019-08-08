@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+
+</div>
+{% endblock %}
+
+<script>
+{% block domready %}
+$.ajax({
+  type: "GET",
+  url: "{% url 'report:sql_stat_only' history_id=5 %}",
+  success: function(data){
+    console.log(data);
+  },
+  error: function(error){
+    console.log("error");
+    console.log(error);
+  }
+})
+{% endblock %}
+</script>

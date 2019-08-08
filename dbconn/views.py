@@ -8,18 +8,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from util.database import connection
-from .decorators import ajax_required
+from util.decorators import ajax_required
 from .forms import DBconnForm
 from .models import DBconn, History
 from .serializers import HistorySerializer 
 
 def index(request):
-    history = History.objects.all()
     taplate_name = 'index.html'
-    context = {
-        'histories': history
-    }
-    return render(request, taplate_name, context=context)
+    return render(request, taplate_name)
 
 
 class HistoryAPIView(APIView):
@@ -58,3 +54,4 @@ def create_chart(request):
     # else return alert Wrong wanning.
     serializer = HistorySerializer(history)
     return Response(serializer.data)
+
