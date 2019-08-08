@@ -12,6 +12,7 @@ class DBconn(models.Model):
     def __str__(self):
         return f'{self.username} - {self.server_ip}:{self.port}'
 
+        
 class History(models.Model):
 
     db_conn = models.ForeignKey(DBconn, on_delete=models.CASCADE)

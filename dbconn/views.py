@@ -7,11 +7,12 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from util.database import connection
+from util.database import managers
 from .decorators import ajax_required
 from .forms import DBconnForm
-from .models import DBconn, History
 from .serializers import HistorySerializer 
+from .tasks import get_db_report
+from .models import DBconn, History
 
 def index(request):
     history = History.objects.all()
@@ -36,13 +37,17 @@ def create_chart(request):
     password = request.POST['password']
     server_ip = request.POST['server_ip']
     port = request.POST['port']
-    start_date = request.POST['start_date']
-    end_date = request.POST['end_date']
-    # dbconn = DBconn(username, password, server_ip, port)
-    history = History(db_conn=DBconn.objects.get(pk=1), 
+    # start_date = request.POST['start_date']
+    start_date = "201907150000" 
+    # end_date = request.POST['end_date']
+    end_date = "201907170000"
+
+    history = History(db_conn=DBconn.objects.get(pk=2), 
                       start_date=start_date,
                       end_date=end_date)
-    connection.connect_db(history)
+
+    dbmanager = managers.ConnectionManager(history)
+    dbmanager.exeute()
     # history.save()
 
     serializer = HistorySerializer(history)
