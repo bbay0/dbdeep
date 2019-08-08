@@ -1,13 +1,17 @@
 import cx_Oracle
 import os
 from util.database import sql_info
+from report.models import (
+                           DBInfoReport,
+                           MajorTop10Report,
+                           SQLStatSQLOnlyReport
+                          )
 
 os.environ["NLS_LANG"] = ".AL32UTF8"
 
 class ConnectionManager:
 
     def __init__(self, history):
-        print("create connection manager")
         self.history = history
     
     def connect_db(self):
@@ -18,7 +22,6 @@ class ConnectionManager:
         return cursor
 
     def execute_sql(self, sqlcommand, params, cursor):
-        print(type(sqlcommand))
         if params == '':
             cursor.execute(sqlcommand)
         else:
@@ -153,7 +156,47 @@ class ConnectionManager:
         args, cursor = self.get_parameters(cursor)
         
         for ind in (0,5,13):
-            print(ind)
+            
             (sqlcommand, params) = sql_info.get_sql_command(ind, args)
             cursor = self.execute_sql(sqlcommand, params, cursor) 
-            print(cursor.fetchall())
+            if ind == 0:
+                dbinfo_list = []
+                for ftype, name, value, note in cursor.fetchall():
+                    dbinfo = DBInfoReport(history=self.history, 
+                                          ftype=ftype,
+                                          name=name,
+                                          value=value,
+                                          note=note)
+                    dbinfo_list.append(dbinfo)
+                DBInfoReport.objects.bulk_create(dbinfo_list)
+            
+            elif ind == 5:
+                major_top_10_report_list = []
+                for row in cursor.fetchall():
+                    major_top_10_report = MajorTop10Report(history=self.history, 
+                    snap_time=row[0], value_per_sec_1=row[1],value_per_sec_2=row[2],
+                    value_per_sec_3=row[3], value_per_sec_4=row[4], value_per_sec_5=row[5],
+                    value_per_sec_6=row[6], value_per_sec_7=row[7], value_per_sec_8=row[8],
+                    value_per_sec_9=row[9], value_per_sec_10=row[10], value_per_sec_etc=row[11],
+                    value_diff_1=row[12], value_diff_2=row[13], value_diff_3=row[14],
+                    value_diff_4=row[15], value_diff_5=row[16], value_diff_6=row[17],
+                    value_diff_7=row[18], value_diff_8=row[19], value_diff_9=row[20],
+                    value_diff_10=row[21], value_diff_etc=row[22]
+                    )
+                    major_top_10_report_list.append(major_top_10_report)
+                MajorTop10Report.objects.bulk_create(major_top_10_report_list)
+            
+            elif ind == 13:
+                sql_stat_sql_only_report_list = []
+                for row in cursor.fetchall():
+                    sql_stat_sql_only_report = SQLStatSQLOnlyReport(history=self.history,
+                    viewtype=row[0], sql_id=row[1], optimizer_mode=row[2],module=row[3],
+                    executions=row[4], fetches=row[5], sorts=row[6], buffer_gets=row[7],
+                    disk_reads=row[8], rows_processed=row[9], cpu_time=row[10],elapsed_time=row[11],
+                    buf_exec=row[12], disk_exec=row[13], rows_exec=row[14], cpu_exec=row[15],
+                    elap_exec=row[16], iowait=row[17], clwait=row[18], apwait=row[19],
+                    ccwait=row[20], rnum=row[21], sql_text=row[22], sql_plan=row[23],
+                    plan_cost1=row[24], plan_cost2=row[25], bind_value=row[26], sql_profile=row[27]
+                    )
+                    sql_stat_sql_only_report_list.append(sql_stat_sql_only_report)
+                SQLStatSQLOnlyReport.objects.bulk_create(sql_stat_sql_only_report_list)

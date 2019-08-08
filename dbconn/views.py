@@ -43,15 +43,19 @@ def create_chart(request):
     # end_date = request.POST['end_date']
     end_date = "201907150100"
 
-    history = History(db_conn=DBconn.objects.get(pk=2), 
+    history = History.objects.get(db_conn=DBconn.objects.get(pk=2), 
+                                  start_date=start_date,
+                                  end_date=end_date)
+    if history == None:
+        history = History(db_conn=DBconn.objects.get(pk=2), 
                       start_date=start_date,
                       end_date=end_date)
+        history.save()
 
     dbmanager = managers.ConnectionManager(history)
     
     # if connection is right, exeute creating chart.    
     dbmanager.exeute()
-    # history.save()
     # else return alert Wrong wanning.
     serializer = HistorySerializer(history)
     return Response(serializer.data)
