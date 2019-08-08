@@ -37,18 +37,21 @@ def create_chart(request):
     password = request.POST['password']
     server_ip = request.POST['server_ip']
     port = request.POST['port']
+    print(username, password, server_ip, port)
     # start_date = request.POST['start_date']
     start_date = "201907150000" 
     # end_date = request.POST['end_date']
-    end_date = "201907170000"
+    end_date = "201907150100"
 
     history = History(db_conn=DBconn.objects.get(pk=2), 
                       start_date=start_date,
                       end_date=end_date)
 
     dbmanager = managers.ConnectionManager(history)
+    
+    # if connection is right, exeute creating chart.    
     dbmanager.exeute()
     # history.save()
-
+    # else return alert Wrong wanning.
     serializer = HistorySerializer(history)
     return Response(serializer.data)

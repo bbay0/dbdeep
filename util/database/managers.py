@@ -1,6 +1,8 @@
 import cx_Oracle
+import os
 from util.database import sql_info
 
+os.environ["NLS_LANG"] = ".AL32UTF8"
 
 class ConnectionManager:
 
@@ -16,6 +18,7 @@ class ConnectionManager:
         return cursor
 
     def execute_sql(self, sqlcommand, params, cursor):
+        print(type(sqlcommand))
         if params == '':
             cursor.execute(sqlcommand)
         else:
@@ -38,7 +41,7 @@ class ConnectionManager:
         sql = "ALTER SESSION SET OPTIMIZER_MODE=ALL_ROWS" #*****
         cursor = self.execute_sql(sql, params, cursor)
         ### 채울 필요 없음.
-        sql = "SELECT DBID FROM V$DATABASE" #***** DBID를 가져옴
+        sql = "SELECT * FROM dba_hist_database_instance where DBID <> (SELECT DBID FROM V$DATABASE)"
         cursor = self.execute_sql(sql, params, cursor)
         result_row = cursor.fetchall()
         args['DBID'] = result_row[0][0]
@@ -49,7 +52,7 @@ class ConnectionManager:
         cursor = self.execute_sql(sql, params, cursor)
         result_row = cursor.fetchall()
         args['INSTANCE_NUMBER'] = result_row[0][0]
-        args['INSTANCE_NUMBER'] = 1
+        # args['INSTANCE_NUMBER'] = 1
     
         # needs snapshot begin - end inputs
         args['BEGIN_DATE'] = self.history.start_date
@@ -131,21 +134,26 @@ class ConnectionManager:
             cursor.callproc('DBMS_ADDM.DELETE', [args['TASK_NAME']])
     
         # # *****
-        # sql = "CALL DBMS_ADDM.ANALYZE_DB(:TASK_NAME,:BEGIN_SNAP_ID,:END_SNAP_ID,:DBID)"
-        # params = {'TASK_NAME': args['TASK_NAME'], 'BEGIN_SNAP_ID': args['BEGIN_SNAP_ID'],
-        #           'END_SNAP_ID': args['END_SNAP_ID'], 'DBID': args['DBID']}
-        # cursor = self.execute_sql(sql, params, cursor)
+        sql = "CALL DBMS_ADDM.ANALYZE_DB(:TASK_NAME,:BEGIN_SNAP_ID,:END_SNAP_ID,:DBID)"
+        params = {'TASK_NAME': args['TASK_NAME'], 'BEGIN_SNAP_ID': args['BEGIN_SNAP_ID'],
+                  'END_SNAP_ID': args['END_SNAP_ID'], 'DBID': args['DBID']}
+        cursor = self.execute_sql(sql, params, cursor)
     
-        # # *****
-        # sql = "SELECT TASK_ID FROM DBA_ADDM_TASKS WHERE TASK_NAME=:TASK_NAME"
-        # params = {'TASK_NAME': args['TASK_NAME']}
-        # cursor = self.execute_sql(sql, params, cursor)
-        # result_row = cursor.fetchall()
-        # args['TASK_ID'] = result_row[0][0]
+        # *****
+        sql = "SELECT TASK_ID FROM DBA_ADDM_TASKS WHERE TASK_NAME=:TASK_NAME"
+        params = {'TASK_NAME': args['TASK_NAME']}
+        cursor = self.execute_sql(sql, params, cursor)
+        result_row = cursor.fetchall()
+        args['TASK_ID'] = result_row[0][0]
     
         return args, cursor
 
     def exeute(self):
         cursor = self.connect_db()
         args, cursor = self.get_parameters(cursor)
-        print(args)
+        
+        for ind in (0,5,13):
+            print(ind)
+            (sqlcommand, params) = sql_info.get_sql_command(ind, args)
+            cursor = self.execute_sql(sqlcommand, params, cursor) 
+            print(cursor.fetchall())

@@ -1562,6 +1562,7 @@ def get_sql_command(ind, args):
          ORDER BY
              SNAP_TIME
         """
+        sqlcommand = str(sqlcommand, "utf-8")
         params = {'DBID': args['DBID'], 'INSTANCE_NUMBER': args['INSTANCE_NUMBER'],
                   'END_SNAP_ID': args['END_SNAP_ID'], 'BEGIN_SNAP_ID': args['BEGIN_SNAP_ID']}
     elif ind == 7:
