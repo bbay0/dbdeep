@@ -2,8 +2,92 @@
 {% block content %}
 
 <form method="POST" id="post-form">
+
   {% csrf_token %}
-  <div class="fieldWrapper">
+
+  <div container="fluid">
+  <div class ="container">
+    <h1> Connection Info </h1>
+    <div class ="formBox">
+      <form>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="inputBox">
+              <div class="inputText">User name</div>
+              <input id="username" type="text" class="input">
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="inputBox">
+              <div class="inputText">Password</div>
+              <input id="password" type="password" class="input">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+        <div class="col-sm-6">
+          <div class="inputBox ">
+            <div class="inputText">Server IP</div>
+            <input id="server_ip" type="text" class="input">
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="inputBox">
+            <div class="inputText">Port #</div>
+            <input id="port" type="text" name="" class="input">
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-sm-6"> 
+          <div class="form-group pmd-textfield pmd-textfield-floating-label">
+            <label class="control-label" for="start_date">Start Date</label>
+            <input type="text" class="form-control" id="start_date">
+          </div>
+        </div>
+        <div class="col-sm-6"> 
+          <div class="form-group pmd-textfield pmd-textfield-floating-label">
+            <label class="control-label" for="end_date">End Date</label>
+            <input type="text" class="form-control" id="end_date">
+          </div>
+        </div>
+      </div>
+        
+      </form>
+
+      <script>
+        $(".input").focus(function() {
+          $(this).parent().addClass("focus");
+        })
+
+        $('start_date').datetimepicker();
+        
+          // End date date and time picker 
+        $('end_date').datetimepicker({
+            useCurrent: false 
+          });
+          
+          // start date picke on chagne event [select minimun date for end date datepicker]
+        $("#start_date").on("dp.change", function (e) {
+            $('#end_date').data("DateTimePicker").minDate(e.date);
+          });
+          // Start date picke on chagne event [select maxmimum date for start date datepicker]
+        $("#end_date").on("dp.change", function (e) {
+          $('#start_date').data("DateTimePicker").maxDate(e.date);
+          });
+
+      </script>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- <div class="fieldWrapper">
     <label for="username">Username : </label>
     <input id="username"> 
   </div>
@@ -26,7 +110,7 @@
   <div class="fieldWrapper">
     <label for="end_date">end date : </label>
     <input id="end_date"> 
-  </div>
+  </div> -->
   <input type="submit" value="Post" class="tiny button">
 </form>
 
