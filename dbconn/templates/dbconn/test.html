@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+            <script src="http://cdnjs.cloudflare.com/ajax/libs/javascript.util/0.12.12/javascript.util.min.js"></script>
+    </head>
+
+    <body>
+        
+        <canvas id="myChart" width="1000" height="700"></canvas>
+        <button id="sendAjax">button</button>
+        
+
+        <!-- 원래 data (label 포함) ajax 통신으로 받아와야 하는데, 우선 하드코딩-->
+        <script>
+                var data = {
+                    labels: [
+                    "07.16 00:30", "07.16 01:00", "07.16 01:30", "07.16 02:00"
+                    ],
+                    datasets: [
+                        {
+                            label: 'OJVM: Generic/Sec', 
+                            data: [
+                                "0", "0.14", "0.884", "0.356", 
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'db file scattered red/Sec',
+                            data: [
+                                0.776, 0.001, 0, 0.259
+                            ],
+                            backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                            ],
+
+                        },
+                        {
+                            label: 'Backup: MML create a backup piece/Sec',
+                            data: [
+                                0, 0.063, 0.535, 0.199
+                            ],
+                            backgroundColor: [
+                            'rgba(255, 206, 86, 0.2)',
+                            ],
+
+                        }
+                ]
+                };
+
+        var options = {
+                    animation: {
+                        animateScale: true
+                    },
+                    responsive: false,
+                    scales: {
+                        yAxes: [
+                            {
+                                ticks: {
+                                    beginAtZero: true                                                                    
+                                }
+                            }
+                        ]
+                    }
+                };
+         
+                var ctx = document.getElementById("myChart").getContext('2d');                                           
+                var myLinechart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: options
+                });
+
+                
+                var button = document.getElementById("sendAjax")
+ 
+button.addEventListener("click", function() {
+    sendAjax('http://localhost:8000/');
+})
+ 
+function sendAjax(url) {
+    var oReq = new XMLHttpRequest();
+ 
+    oReq.open('POST', url);
+    oReq.setRequestHeader('Content-Type', "application/json") // json 형태로 보낸다                         
+    oReq.send();
+ 
+    oReq.addEventListener('load', function() {
+        var result = JSON.parse(oReq.responseText);
+        var score = result.score;
+        var comp_data = data.datasets[0].data;
+ 
+        for (var i = 0; i < comp_data.length; i++) {
+            comp_data[i] = score[i];
+        }
+ 
+        data.datasets[0].data = comp_data;
+        mylineChart.update();
+    })
+}
+
+        </script>
+    </body>
+</html>

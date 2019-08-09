@@ -2,7 +2,8 @@
 
 {% block content %}
 <div>
-
+  <canvas id="myChart" width="1000" height="700"></canvas>
+  <button id="sendAjax">button</button>
 </div>
 {% endblock %}
 
@@ -10,14 +11,93 @@
 {% block domready %}
 $.ajax({
   type: "GET",
-  url: "{% url 'report:sql_stat_only' history_id=5 %}",
-  success: function(data){
-    console.log(data);
+  url: "{% url 'report:major_top' history_id=5 %}",
+  success: function(report){
+    const ctx = document.getElementById("myChart").getContext('2d');                                           
+    console.log(report, data, options)
+    var data = {
+      labels: report.snap_time,
+      datasets: [
+        {
+          label: 'OJVM: Generic/Sec', 
+          data: report.value_per_1,
+          backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                ],
+          borderColor: [
+                  'rgba(255,99,132,1)',
+                ],
+          borderWidth: 1
+        },
+        {
+          label: 'db file scattered red/Sec',
+          data: [
+                  0.776, 0.001, 0, 0.259
+                ],
+          backgroundColor: [
+                  'rgba(54, 162, 235, 0.2)',
+                ],
+        },
+        {
+          label: 'Backup: MML create a backup piece/Sec',
+          data: [
+                  0, 0.063, 0.535, 0.199
+                ],
+          backgroundColor: [
+                'rgba(255, 206, 86, 0.2)',
+                ],
+        }
+      ]
+    };
+    const myLinechart = new Chart(ctx, {
+                    type: 'pie',
+                    data: data,
+                    options: options
+                  });
   },
   error: function(error){
     console.log("error");
     console.log(error);
   }
 })
+var options = {
+    animation: {
+      animateScale: true
+      },
+    responsive: false,
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true                                                                    
+          }
+        }
+      ]
+    }
+  };
+
+// function sendAjax(url) {
+//     var oReq = new XMLHttpRequest();
+ 
+//     oReq.open('POST', url);
+//     oReq.setRequestHeader('Content-Type', "application/json") // json 형태로 보낸다                         
+//     oReq.send();
+ 
+//     oReq.addEventListener('load', function() {
+//         var result = JSON.parse(oReq.responseText);
+//         var score = result.score;
+//         var comp_data = data.datasets[0].data;
+ 
+//         for (var i = 0; i < comp_data.length; i++) {
+//             comp_data[i] = score[i];
+//         }
+ 
+//         data.datasets[0].data = comp_data;
+//         mylineChart.update();
+//     })
+// }
 {% endblock %}
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/javascript.util/0.12.12/javascript.util.min.js"></script>
