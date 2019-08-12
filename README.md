@@ -1,15 +1,24 @@
 # dbdeep
 System About Upgrade DB Quality Using AWR
 
+## Installaion
+### Dependey
+Oracle: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+
+### 개발환경 
+Django: 2.1.11
+celery: 3.1.24
+MySQL: 
+
 ## setup
 
 ## quick start
 
-###DB Info
+### DB Info
 
-###SQL_TOP10Event
+### SQL_TOP10Event
 
-###SQL Stat (SQL Only)
+### SQL Stat (SQL Only)
 
 ## contibutor
 Project Manager : Beomjae, Lim
